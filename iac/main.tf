@@ -56,18 +56,18 @@ resource "google_bigquery_dataset" "dataset" {
   delete_contents_on_destroy = true
 }
 
-resource "google_project_service" "cloud-composer" {
-  count                      = local.cloud_composer_enabled
-  project                    = var.project_id
-  service                    = "composer.googleapis.com"
-  disable_dependent_services = true
-}
+# resource "google_project_service" "cloud-composer" {
+#   count                      = local.cloud_composer_enabled
+#   project                    = var.project_id
+#   service                    = "composer.googleapis.com"
+#   disable_dependent_services = true
+# }
 
-# Cloud Composer Environment
-module "cloud-composer" {
-  source     = "./cloud-composer"
-  count      = local.cloud_composer_enabled
-  project_id = var.project_id
-  region     = var.region
-  depends_on = [google_project_service.iamcredentials, google_project_service.cloud-composer]
-}
+# # Cloud Composer Environment
+# module "cloud-composer" {
+#   source     = "./cloud-composer"
+#   count      = local.cloud_composer_enabled
+#   project_id = var.project_id
+#   region     = var.region
+#   depends_on = [google_project_service.iamcredentials, google_project_service.cloud-composer]
+# }
