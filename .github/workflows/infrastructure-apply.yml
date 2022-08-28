@@ -3,6 +3,9 @@ name: 'Google Cloud IaC Create Resources'
 on: 
   push:
     branches: [ main ]
+  pull_request:
+    branches:
+      - main
     paths:
     - 'iac/**'
 
