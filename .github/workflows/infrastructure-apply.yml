@@ -30,6 +30,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
         env:
           WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
           version: 'latest'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
