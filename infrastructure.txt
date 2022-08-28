@@ -1,4 +1,4 @@
-name: 'Google Cloud IaC Create Resources'
+<!-- name: 'Google Cloud IaC Create Resources'
 
 on: 
   push:
@@ -41,23 +41,61 @@ jobs:
           export_default_credentials: true
 
       # Generates an execution plan for Terraform
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform-version: 1.1.7
-      
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
-
       - name: Terraform Plan
-        run: terraform plan
+        continue-on-error: true
+        run: |
+          chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+          "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
 
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve
+          chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_fmt.sh"
+          "${GITHUB_WORKSPACE}/.github/workflows/tf_fmt.sh"
+
+          chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
+          "${GITHUB_WORKSPACE}/.github/workflows/tf_plan_check.sh"
+          
+          terraform plan -out "tf_plan" -input=false
+
+      - name: Upload TF Plan
+        uses: actions/upload-artifact@v2
+        with:
+          name: tf_plan
+          path: ./iac
+          if-no-files-found: error
+          retention-days: 1
+
+  terraform_apply:
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    needs: terraform_plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: tf_apply
+
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Setup GCP Service Account
+      uses: google-github-actions/setup-gcloud@main
+      with:
+        version: 'latest'
+        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Download TF Plan
+      uses: actions/download-artifact@v2
+      with:
+        name: tf_plan
+        path: ./iac
+
+    # Provision resources via Terraform        
+    - name: Terraform Apply
+      run: |
+        chmod +x "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+        "${GITHUB_WORKSPACE}/.github/workflows/tf_init.sh"
+        terraform show "tf_plan"
+        terraform apply "tf_plan"
 
   slack_notification:
     name: 'Slack Notification'
@@ -88,4 +126,4 @@ jobs:
         SLACK_TITLE: ${{ github.repository }}
         SLACK_MESSAGE: ${{ github.event.head_commit.message }}
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_FOOTER: 'Terraform Github Actions Feature Branch Push Alert'
+        SLACK_FOOTER: 'Terraform Github Actions Feature Branch Push Alert' -->
