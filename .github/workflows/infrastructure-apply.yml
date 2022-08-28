@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: tf_plan
-          path: ./iac/tf_plan
+          path: ./iac
           if-no-files-found: error
           retention-days: 1
 
