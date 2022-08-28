@@ -46,11 +46,11 @@ jobs:
         with:
           terraform-version: 1.1.7
       
-      - name: Terraform Init
-        run: terraform init
-        env: 
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+      # - name: Terraform Init
+      #   run: terraform init
+      #   env: 
+      #     service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+      #     service_account_key: ${{ secrets.GCP_SA_KEY }}
 
       - name: Terraform Format
         run: terraform fmt -check
